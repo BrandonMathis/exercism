@@ -9,7 +9,8 @@ defmodule Words do
   @spec count(String.t) :: map()
   def count(words) do
     words
-    |> String.split
+    |> String.downcase
+    |> String.split(~r/\s|_/)
     |> strip_punctuation
     |> count_words
   end
@@ -20,12 +21,12 @@ defmodule Words do
 
   def strip_punctuation(words) do
     list = Enum.map(words, &capture_word/1)
-    Enum.reject(list, &(nil == (&1)))
+    |> Enum.reject(&nil == (&1))
     |> List.flatten
   end
 
   def capture_word(word) do
-    Regex.run(~r/[\w]+/, word)
+    Regex.run(~r/[\w|-]+/u, word)
   end
 
   def update_count(word, acc) do
